@@ -49,7 +49,11 @@ function move(position, command) {
                 depth: position.depth + unit
             }
         }
-        return position;
+
+        return {
+            ...position,
+            depth: position.depth - unit
+        };
     }
 
     return apply(position, direction, unit);
