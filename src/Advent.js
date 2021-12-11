@@ -1,23 +1,30 @@
 function depthMeasurementIncreases(measurements) {
+    const stepSize = 1;
     const reducer = (previous, current, currentIndex, measurements) => {
-        if (current > measurements[currentIndex - 1]) {
+        const nextSignificantMeasurementIndex = currentIndex + stepSize;
+        if (nextSignificantMeasurementIndex >= measurements.length) {
+            return previous;
+        }
+
+        if (measurements[nextSignificantMeasurementIndex] > current) {
             return [...previous, 1];
         }
         return [...previous, 0]
     };
 
-    const increases = measurements.reduce(reducer, []);
+    const increases = measurements.reduce(reducer, [0]);
     return increases.reduce((a, b) => a + b);
 }
 
 function depthMeasurementWindowIncreases(measurements) {
+    const stepSize = 3;
     const reducer = (previous, current, currentIndex, measurements) => {
-        const nextWindowEndIndex = currentIndex + 3;
-        if (nextWindowEndIndex >= measurements.length) {
+        const nextSignificantMeasurementIndex = currentIndex + stepSize;
+        if (nextSignificantMeasurementIndex >= measurements.length) {
             return previous;
         }
 
-        if (measurements[nextWindowEndIndex] > current) {
+        if (measurements[nextSignificantMeasurementIndex] > current) {
             return [...previous, 1];
         }
         return [...previous, 0]
