@@ -1,14 +1,4 @@
-function depthMeasurementIncreases(measurements) {
-    const reducer = (previous, current, currentIndex, measurements) => {
-        if (current > measurements[currentIndex - 1]) {
-            return [...previous, 1];
-        }
-        return [...previous, 0]
-    };
-
-    const increases = measurements.reduce(reducer, []);
-    return increases.reduce((a, b) => a + b);
-}
+const {depthMeasurementIncreases} = require("./Advent");
 
 describe('Advent of Code 2021', () => {
     describe('day 1', () => {
