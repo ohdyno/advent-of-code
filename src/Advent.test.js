@@ -64,11 +64,9 @@ describe('Advent of Code 2021', () => {
                     horizontal: 0,
                     depth: 0
                 };
-                const command = "forward 5";
 
-                const position = move(initialPosition, command);
-
-                expect(position.horizontal).toBe(5);
+                expect(move(initialPosition, "forward 5").horizontal).toBe(5);
+                expect(move(initialPosition, "forward 11").horizontal).toBe(11);
             })
         })
     })

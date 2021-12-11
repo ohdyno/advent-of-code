@@ -24,10 +24,28 @@ function depthMeasurementWindowIncreases(measurements) {
 }
 
 function move(position, command) {
-    return {
-        ...position,
-        horizontal: 5
+    function parse(command) {
+        const pattern = /(?<direction>\w+)\s+(?<unit>\d+)/;
+        const matches = command.match(pattern);
+        return {
+            direction: matches.groups.direction,
+            unit: Number.parseInt(matches.groups.unit)
+        };
     }
+
+    const {direction, unit} = parse(command);
+
+    function apply(position, direction, unit) {
+        if ("forward".includes(direction)) {
+            return {
+                ...position,
+                horizontal: position.horizontal + unit
+            }
+        }
+        return position;
+    }
+
+    return apply(position, direction, unit);
 }
 
 module.exports = {
