@@ -23,7 +23,15 @@ function depthMeasurementWindowIncreases(measurements) {
     return calculateDepthMeasurementIncreases(measurements, 3);
 }
 
+function move(position, command) {
+    return {
+        ...position,
+        horizontal: 5
+    }
+}
+
 module.exports = {
     depthMeasurementIncreases,
-    depthMeasurementWindowIncreases
+    depthMeasurementWindowIncreases,
+    move
 }

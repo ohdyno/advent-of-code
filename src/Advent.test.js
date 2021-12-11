@@ -1,4 +1,4 @@
-const {depthMeasurementIncreases, depthMeasurementWindowIncreases} = require("./Advent");
+const {depthMeasurementIncreases, depthMeasurementWindowIncreases, move} = require("./Advent");
 const fs = require('fs');
 const path = require("path");
 
@@ -54,6 +54,22 @@ describe('Advent of Code 2021', () => {
                 const result = depthMeasurementWindowIncreases(measurements);
                 expect(result).toBe(1395);
             });
+        })
+    })
+
+    describe('day 2', () => {
+        describe('calculating submarine position', () => {
+            it('moves the submarine forward', () => {
+                const initialPosition = {
+                    horizontal: 0,
+                    depth: 0
+                };
+                const command = "forward 5";
+
+                const position = move(initialPosition, command);
+
+                expect(position.horizontal).toBe(5);
+            })
         })
     })
 })
