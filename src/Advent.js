@@ -42,6 +42,13 @@ function move(position, command) {
                 horizontal: position.horizontal + unit
             }
         }
+
+        if ("down".includes(direction)) {
+            return {
+                ...position,
+                depth: position.depth + unit
+            }
+        }
         return position;
     }
 

@@ -68,6 +68,16 @@ describe('Advent of Code 2021', () => {
                 expect(move(initialPosition, "forward 5").horizontal).toBe(5);
                 expect(move(initialPosition, "forward 11").horizontal).toBe(11);
             })
+
+            it('moves the submarine down', () => {
+                const initialPosition = {
+                    horizontal: 0,
+                    depth: 0
+                };
+
+                expect(move(initialPosition, "down 5").depth).toBe(5);
+                expect(move(initialPosition, "down 11").depth).toBe(11);
+            })
         })
     })
 })
