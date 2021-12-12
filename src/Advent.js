@@ -59,8 +59,13 @@ function move(position, command) {
     return apply(position, direction, unit);
 }
 
+function calculatePosition(position, commands) {
+    return commands.reduce((position, command) => move(position, command), position)
+}
+
 module.exports = {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
-    move
+    move,
+    calculatePosition
 }
