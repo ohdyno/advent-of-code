@@ -65,12 +65,28 @@ function calculatePosition(position, commands) {
 }
 
 function calculatePowerConsumption(report) {
-    function weighEachBit(report) {
-        const weights = new Array(report[0].length).fill(0);
-        report.forEach(number => {
-            [...number].forEach((digit, index) => weights[index] += Number.parseInt(digit))
-        })
-        return weights.map(weight => weight - report.length / 2)
+    function weighBits(report) {
+        /**
+         * Sum up each bit throughout the entire report.
+         *
+         * Example ['110', '100', '010'] => [2, 2, 0]
+         */
+        function sumBitWeights(report) {
+            const sumWeights = new Array(report[0].length).fill(0);
+            report.forEach(number => {
+                [...number].forEach((digit, index) => sumWeights[index] += Number.parseInt(digit))
+            })
+            return sumWeights;
+        }
+
+        /**
+         * For any bit where count(1) > count(0) within a report, its normalized weight is positive.
+         */
+        function normalize(bitWeights, report) {
+            return bitWeights.map(weight => weight - report.length / 2);
+        }
+
+        return normalize(sumBitWeights(report), report)
     }
 
     function convertWeightsToBits(weights, positiveBitValue, negativeBitValue) {
@@ -93,7 +109,7 @@ function calculatePowerConsumption(report) {
         return convertWeightsToBits(weights, "0", "1");
     }
 
-    const weights = weighEachBit(report);
+    const weights = weighBits(report);
     const mostCommonBits = calculateMostCommonBits(weights);
     const leastCommonBits = calculateLeastCommonBits(weights);
 
