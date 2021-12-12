@@ -66,27 +66,27 @@ function calculatePosition(position, commands) {
 
 function calculatePowerConsumption(report) {
     function weighEachBit(report) {
-        const sumOfEachBit = [];
+        const weights = [];
         report.map(number => {
             [...number].forEach((digit, index) => {
                 const value = Number.parseInt(digit);
-                if (index >= sumOfEachBit.length) {
-                    sumOfEachBit.push(value);
+                if (index >= weights.length) {
+                    weights.push(value);
                 } else {
-                    sumOfEachBit[index] += value
+                    weights[index] += value
                 }
             })
         })
-        for (let i = 0; i < sumOfEachBit.length; i++) {
-            sumOfEachBit[i] -= report.length / 2
+        for (let i = 0; i < weights.length; i++) {
+            weights[i] -= report.length / 2
         }
-        return sumOfEachBit;
+        return weights;
     }
 
-    function convertWeightsToBits(weight, positiveBitValue, negativeBitValue) {
+    function convertWeightsToBits(weights, positiveBitValue, negativeBitValue) {
         let bits = '';
-        for (let i = 0; i < weight.length; i++) {
-            if (weight[i] > 0) {
+        for (let i = 0; i < weights.length; i++) {
+            if (weights[i] > 0) {
                 bits += positiveBitValue
             } else {
                 bits += negativeBitValue
@@ -95,17 +95,17 @@ function calculatePowerConsumption(report) {
         return bits;
     }
 
-    function calculateMostCommonBits(weight) {
-        return convertWeightsToBits(weight, "1", "0");
+    function calculateMostCommonBits(weights) {
+        return convertWeightsToBits(weights, "1", "0");
     }
 
-    function calculateLeastCommonBits(weight) {
-        return convertWeightsToBits(weight, "0", "1");
+    function calculateLeastCommonBits(weights) {
+        return convertWeightsToBits(weights, "0", "1");
     }
 
-    const bitWeight = weighEachBit(report);
-    const mostCommonBits = calculateMostCommonBits(bitWeight);
-    const leastCommonBits = calculateLeastCommonBits(bitWeight);
+    const weights = weighEachBit(report);
+    const mostCommonBits = calculateMostCommonBits(weights);
+    const leastCommonBits = calculateLeastCommonBits(weights);
 
     return Number.parseInt(mostCommonBits, 2) * Number.parseInt(leastCommonBits, 2)
 }
