@@ -23,49 +23,48 @@ function depthMeasurementWindowIncreases(measurements) {
     return calculateDepthMeasurementIncreases(measurements, 3);
 }
 
-function move(position, command) {
-    function parse(command) {
-        const pattern = /(?<direction>\w+)\s+(?<unit>\d+)/;
-        const matches = command.match(pattern);
-        return {
-            direction: matches.groups.direction,
-            unit: Number.parseInt(matches.groups.unit)
-        };
-    }
-
-    const {direction, unit} = parse(command);
-
-    function apply(position, direction, unit) {
-        if ("forward".includes(direction)) {
-            return {
-                ...position,
-                horizontal: position.horizontal + unit
-            }
-        }
-
-        if ("down".includes(direction)) {
-            return {
-                ...position,
-                depth: position.depth + unit
-            }
-        }
-
-        return {
-            ...position,
-            depth: position.depth - unit
-        };
-    }
-
-    return apply(position, direction, unit);
-}
-
 function calculatePosition(position, commands) {
+    function move(position, command) {
+        function parse(command) {
+            const pattern = /(?<direction>\w+)\s+(?<unit>\d+)/;
+            const matches = command.match(pattern);
+            return {
+                direction: matches.groups.direction,
+                unit: Number.parseInt(matches.groups.unit)
+            };
+        }
+
+        const {direction, unit} = parse(command);
+
+        function apply(position, direction, unit) {
+            if ("forward".includes(direction)) {
+                return {
+                    ...position,
+                    horizontal: position.horizontal + unit
+                }
+            }
+
+            if ("down".includes(direction)) {
+                return {
+                    ...position,
+                    depth: position.depth + unit
+                }
+            }
+
+            return {
+                ...position,
+                depth: position.depth - unit
+            };
+        }
+
+        return apply(position, direction, unit);
+    }
+
     return commands.reduce((position, command) => move(position, command), position)
 }
 
 module.exports = {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
-    move,
     calculatePosition
 }
