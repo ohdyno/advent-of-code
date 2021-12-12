@@ -34,34 +34,33 @@ function calculatePosition(position, commands) {
             };
         }
 
-        const {direction, unit} = parse(command);
-
-        function apply(position, direction, unit) {
-            if ("forward".includes(direction)) {
-                return {
-                    ...position,
-                    horizontal: position.horizontal + unit,
-                    depth: position.depth + unit * position.aim
-                }
+        function updatePosition(position, direction, unit) {
+            switch (direction) {
+                case 'forward':
+                    return {
+                        ...position,
+                        horizontal: position.horizontal + unit,
+                        depth: position.depth + unit * position.aim
+                    }
+                case 'down':
+                    return {
+                        ...position,
+                        aim: position.aim + unit
+                    }
+                default:
+                    return {
+                        ...position,
+                        aim: position.aim - unit
+                    };
             }
-
-            if ("down".includes(direction)) {
-                return {
-                    ...position,
-                    aim: position.aim + unit
-                }
-            }
-
-            return {
-                ...position,
-                aim: position.aim - unit
-            };
         }
 
-        return apply(position, direction, unit);
+        const {direction, unit} = parse(command);
+
+        return updatePosition(position, direction, unit);
     }
 
-    return commands.reduce((position, command) => move(position, command), position)
+    return commands.reduce(move, position)
 }
 
 function calculatePowerConsumption(report) {
