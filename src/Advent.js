@@ -83,21 +83,31 @@ function calculatePowerConsumption(report) {
         return sumOfEachBit;
     }
 
-    function calculateMostCommonBits(weight) {
-        let mostSignificantBits = '';
+    function convertWeightsToBits(weight, positiveBitValue, negativeBitValue) {
+        let bits = '';
         for (let i = 0; i < weight.length; i++) {
             if (weight[i] > 0) {
-                mostSignificantBits += "1"
+                bits += positiveBitValue
             } else {
-                mostSignificantBits += "0"
+                bits += negativeBitValue
             }
         }
-        return mostSignificantBits;
+        return bits;
+    }
+
+    function calculateMostCommonBits(weight) {
+        return convertWeightsToBits(weight, "1", "0");
+    }
+
+    function calculateLeastCommonBits(weight) {
+        return convertWeightsToBits(weight, "0", "1");
     }
 
     const bitWeight = weighEachBit(report);
     const mostCommonBits = calculateMostCommonBits(bitWeight);
-    return mostCommonBits;
+    const leastCommonBits = calculateLeastCommonBits(bitWeight);
+
+    return Number.parseInt(mostCommonBits, 2) * Number.parseInt(leastCommonBits, 2)
 }
 
 module.exports = {

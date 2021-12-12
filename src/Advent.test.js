@@ -125,7 +125,7 @@ describe('Advent of Code 2021', () => {
     })
 
     describe('day 3', () => {
-        it('calculates the most frequent significant bits', () => {
+        it('calculate power consumption', () => {
             const report = [
                 "00010",
                 "00100",
@@ -141,7 +141,7 @@ describe('Advent of Code 2021', () => {
                 "11110",
             ]
             const result = calculatePowerConsumption(report);
-            expect(result).toBe('10110')
+            expect(result).toBe(198)
         });
     })
 })
