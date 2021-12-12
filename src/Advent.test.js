@@ -162,8 +162,8 @@ describe('Advent of Code 2021', () => {
 
             it('calculates from the input file', () => {
                 const report = readInputFile('day-3')
-                const result = calculatePowerConsumption(report);
-                expect(result).toBe(3969000)
+                const result = calculateLifeSupportRating(report);
+                expect(result).toBe(4267809)
             })
         });
     })
