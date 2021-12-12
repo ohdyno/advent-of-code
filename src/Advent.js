@@ -132,7 +132,7 @@ function calculateLifeSupportRating(report) {
             return readings[0];
         }
 
-        function bucketSortAtIndex(readings, index) {
+        function partitionIntoOnesAndZeros(readings, index) {
             return readings.reduce(([ones, zeros], current) => {
                 if (current.charAt(index) === '0') {
                     return [ones, [...zeros, current]]
@@ -142,7 +142,7 @@ function calculateLifeSupportRating(report) {
             }, [[], []])
         }
 
-        const [ones, zeros] = bucketSortAtIndex(readings, index);
+        const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
         if (ones.length >= zeros.length) {
             return calculateOxygenGeneratorRating(ones, index + 1);
         }
