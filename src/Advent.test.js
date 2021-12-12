@@ -1,7 +1,8 @@
 const {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
-    calculatePosition
+    calculatePosition,
+    calculatePowerConsumption,
 } = require("./Advent");
 const fs = require('fs');
 const path = require("path");
@@ -121,5 +122,26 @@ describe('Advent of Code 2021', () => {
                 expect(result.horizontal * result.depth).toBe(1971095320)
             });
         })
+    })
+
+    describe('day 3', () => {
+        it('calculates the most frequent significant bits', () => {
+            const report = [
+                "00010",
+                "00100",
+                "00111",
+                "01010",
+                "01111",
+                "10000",
+                "10101",
+                "10110",
+                "10111",
+                "11001",
+                "11100",
+                "11110",
+            ]
+            const result = calculatePowerConsumption(report);
+            expect(result).toBe('10110')
+        });
     })
 })

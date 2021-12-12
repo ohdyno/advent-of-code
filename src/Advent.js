@@ -64,8 +64,45 @@ function calculatePosition(position, commands) {
     return commands.reduce((position, command) => move(position, command), position)
 }
 
+function calculatePowerConsumption(report) {
+    function weighEachBit(report) {
+        const sumOfEachBit = [];
+        report.map(number => {
+            [...number].forEach((digit, index) => {
+                const value = Number.parseInt(digit);
+                if (index >= sumOfEachBit.length) {
+                    sumOfEachBit.push(value);
+                } else {
+                    sumOfEachBit[index] += value
+                }
+            })
+        })
+        for (let i = 0; i < sumOfEachBit.length; i++) {
+            sumOfEachBit[i] -= report.length / 2
+        }
+        return sumOfEachBit;
+    }
+
+    function calculateMostCommonBits(weight) {
+        let mostSignificantBits = '';
+        for (let i = 0; i < weight.length; i++) {
+            if (weight[i] > 0) {
+                mostSignificantBits += "1"
+            } else {
+                mostSignificantBits += "0"
+            }
+        }
+        return mostSignificantBits;
+    }
+
+    const bitWeight = weighEachBit(report);
+    const mostCommonBits = calculateMostCommonBits(bitWeight);
+    return mostCommonBits;
+}
+
 module.exports = {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
-    calculatePosition
+    calculatePosition,
+    calculatePowerConsumption,
 }
