@@ -145,7 +145,27 @@ function calculateLifeSupportRating(report) {
         return calculateOxygenGeneratorRating(bigger, index + 1);
     }
 
-    return calculateOxygenGeneratorRating(report, 0);
+    function calculateCO2ScrubberRating(readings, index) {
+        if (readings.length === 1) {
+            return readings[0];
+        }
+
+        function partitionIntoOnesAndZeros(readings, index) {
+            return readings.reduce(([ones, zeros], current) => {
+                if (current.charAt(index) === '0') {
+                    return [ones, [...zeros, current]]
+                } else {
+                    return [[...ones, current], zeros]
+                }
+            }, [[], []])
+        }
+
+        const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
+        const smaller = zeros.length <= ones.length ? zeros : ones;
+        return calculateCO2ScrubberRating(smaller, index + 1);
+    }
+
+    return calculateCO2ScrubberRating(report, 0);
 }
 
 module.exports = {
