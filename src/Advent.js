@@ -133,23 +133,20 @@ function calculateLifeSupportRating(report) {
         }
 
         function bucketSortAtIndex(readings, index) {
-            const ones = []
-            const zeros = []
-            readings.forEach(reading => {
-                if (reading.charAt(index) === '0') {
-                    zeros.push(reading)
+            return readings.reduce(([ones, zeros], current) => {
+                if (current.charAt(index) === '0') {
+                    return [ones, [...zeros, current]]
                 } else {
-                    ones.push(reading)
+                    return [[...ones, current], zeros]
                 }
-            })
-            return [ones, zeros];
+            }, [[], []])
         }
 
         const [ones, zeros] = bucketSortAtIndex(readings, index);
         if (ones.length >= zeros.length) {
-            return calculateOxygenGeneratorRating(ones, index+1);
+            return calculateOxygenGeneratorRating(ones, index + 1);
         }
-        return calculateOxygenGeneratorRating(zeros, index+1);
+        return calculateOxygenGeneratorRating(zeros, index + 1);
     }
 
     return calculateOxygenGeneratorRating(report, 0);
