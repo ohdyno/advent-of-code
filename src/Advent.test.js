@@ -15,18 +15,6 @@ function readInputFile(fileName) {
         .filter((command) => command.length > 0);
 }
 
-function readMeasurementsFromInputFile() {
-    function readMeasurementFile(filePath) {
-        return fs.readFileSync(filePath)
-            .toString()
-            .split("\n")
-            .map(input => Number.parseInt(input))
-            .filter(Number.isInteger);
-    }
-
-    return readMeasurementFile(path.join(__dirname, 'inputs', 'day-1.txt'));
-}
-
 describe('Advent of Code 2021', () => {
     describe('day 1', () => {
         describe('counting the number of times a depth measurement increases', () => {
@@ -43,7 +31,7 @@ describe('Advent of Code 2021', () => {
             })
 
             it('calculates the production inputs', () => {
-                const measurements = readMeasurementsFromInputFile();
+                const measurements = readInputFile('day-1').map(input => Number.parseInt(input));
                 const result = depthMeasurementIncreases(measurements);
                 expect(result).toBe(1451);
             });
@@ -63,7 +51,7 @@ describe('Advent of Code 2021', () => {
             })
 
             it('calculates the production inputs', () => {
-                const measurements = readMeasurementsFromInputFile();
+                const measurements = readInputFile('day-1').map(input => Number.parseInt(input));
                 const result = depthMeasurementWindowIncreases(measurements);
                 expect(result).toBe(1395);
             });
