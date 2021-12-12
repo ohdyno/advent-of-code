@@ -64,6 +64,10 @@ function calculatePosition(position, commands) {
 }
 
 function calculatePowerConsumption(report) {
+    /**
+     * Find most common bits for each bit location. If there is an equal number of 1s and 0s
+     * for a bit, mark that bit location with a NaN.
+     */
     function findMostCommonBits(report) {
         /**
          * For each bit in the report, calculate count(1) - count(0).
@@ -84,15 +88,33 @@ function calculatePowerConsumption(report) {
 
         const bits = calculatePositiveNegativeDifferencesForEachBit(report);
 
-        return bits.map(bit => bit >= 0 ? 1 : 0)
+        return bits.map(bit => {
+            if (bit === 0) {
+                return Number.NaN
+            }
+
+            if (bit > 0) {
+                return 1;
+            }
+
+            return 0;
+        })
     }
 
     function convertToGammaRate(weights) {
-        return Number.parseInt(weights.join(''), 2)
+        const bitRepresentation = weights.map(weight => Number.isNaN(weight) ? 1 : weight).join('');
+        return Number.parseInt(bitRepresentation, 2)
     }
 
     function convertToEpsilonRate(weights) {
-        return Number.parseInt(weights.map(weight => weight === 0 ? 1 : 0).join(''), 2)
+        const bitRepresentation = weights
+            .map(weight => {
+                if (Number.isNaN(weight)) {
+                    return 0
+                }
+                return weight === 0 ? 1 : 0;
+            }).join('');
+        return Number.parseInt(bitRepresentation, 2)
     }
 
     const mostCommonBits = findMostCommonBits(report);
