@@ -66,21 +66,11 @@ function calculatePosition(position, commands) {
 
 function calculatePowerConsumption(report) {
     function weighEachBit(report) {
-        const weights = [];
-        report.map(number => {
-            [...number].forEach((digit, index) => {
-                const value = Number.parseInt(digit);
-                if (index >= weights.length) {
-                    weights.push(value);
-                } else {
-                    weights[index] += value
-                }
-            })
+        const weights = new Array(report[0].length).fill(0);
+        report.forEach(number => {
+            [...number].forEach((digit, index) => weights[index] += Number.parseInt(digit))
         })
-        for (let i = 0; i < weights.length; i++) {
-            weights[i] -= report.length / 2
-        }
-        return weights;
+        return weights.map(weight => weight - report.length / 2)
     }
 
     function convertWeightsToBits(weights, positiveBitValue, negativeBitValue) {
