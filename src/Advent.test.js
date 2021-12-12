@@ -125,23 +125,39 @@ describe('Advent of Code 2021', () => {
     })
 
     describe('day 3', () => {
-        it('calculate power consumption', () => {
-            const report = [
-                "00010",
-                "00100",
-                "00111",
-                "01010",
-                "01111",
-                "10000",
-                "10101",
-                "10110",
-                "10111",
-                "11001",
-                "11100",
-                "11110",
-            ]
-            const result = calculatePowerConsumption(report);
-            expect(result).toBe(198)
+        describe('calculate power consumption', () => {
+            it('calculates from an array', () => {
+                const report = [
+                    "00010",
+                    "00100",
+                    "00111",
+                    "01010",
+                    "01111",
+                    "10000",
+                    "10101",
+                    "10110",
+                    "10111",
+                    "11001",
+                    "11100",
+                    "11110",
+                ]
+                const result = calculatePowerConsumption(report);
+                expect(result).toBe(198)
+            })
+
+            it('calculates from the input file', () => {
+                function readInputFile(fileName) {
+                    const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
+                    return fs.readFileSync(filePath)
+                        .toString()
+                        .split("\n")
+                        .filter((command) => command.length > 0);
+                }
+
+                const report = readInputFile('day-3')
+                const result = calculatePowerConsumption(report);
+                expect(result).toBe(3969000)
+            })
         });
     })
 })
