@@ -1,5 +1,3 @@
-const assert = require("assert");
-
 function calculateDepthMeasurementIncreases(measurements, stepSize) {
     const reducer = (previous, current, currentIndex, measurements) => {
         const nextSignificantMeasurementIndex = currentIndex + stepSize;
