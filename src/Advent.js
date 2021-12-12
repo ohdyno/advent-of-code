@@ -134,7 +134,7 @@ function calculateLifeSupportRating(report) {
 
     function calculateOxygenGeneratorRating(readings, index) {
         if (readings.length === 1) {
-            return readings[0];
+            return Number.parseInt(readings[0],2);
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
@@ -144,7 +144,7 @@ function calculateLifeSupportRating(report) {
 
     function calculateCO2ScrubberRating(readings, index) {
         if (readings.length === 1) {
-            return readings[0];
+            return Number.parseInt(readings[0],2);
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
@@ -152,7 +152,7 @@ function calculateLifeSupportRating(report) {
         return calculateCO2ScrubberRating(smaller, index + 1);
     }
 
-    return calculateCO2ScrubberRating(report, 0);
+    return calculateOxygenGeneratorRating(report, 0) * calculateCO2ScrubberRating(report, 0);
 }
 
 module.exports = {

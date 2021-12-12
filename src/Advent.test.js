@@ -157,7 +157,7 @@ describe('Advent of Code 2021', () => {
                     "11110",
                 ]
                 const result = calculateLifeSupportRating(report);
-                expect(result).toBe('01010')
+                expect(result).toBe(230)
             })
 
             it('calculates from the input file', () => {
