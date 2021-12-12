@@ -141,10 +141,8 @@ function calculateLifeSupportRating(report) {
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
-        if (ones.length >= zeros.length) {
-            return calculateOxygenGeneratorRating(ones, index + 1);
-        }
-        return calculateOxygenGeneratorRating(zeros, index + 1);
+        const bigger = ones.length >= zeros.length ? ones : zeros;
+        return calculateOxygenGeneratorRating(bigger, index + 1);
     }
 
     return calculateOxygenGeneratorRating(report, 0);
