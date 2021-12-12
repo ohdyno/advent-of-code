@@ -122,22 +122,19 @@ function calculatePowerConsumption(report) {
 }
 
 function calculateLifeSupportRating(report) {
-    // Take each index, sort each reading into 1s and 0s bucket. The bigger bucket is used for next recursion.
-    // Recursion stops when the bigger bucket is of size one.
+    function partitionIntoOnesAndZeros(readings, index) {
+        return readings.reduce(([ones, zeros], current) => {
+            if (current.charAt(index) === '0') {
+                return [ones, [...zeros, current]]
+            } else {
+                return [[...ones, current], zeros]
+            }
+        }, [[], []])
+    }
 
     function calculateOxygenGeneratorRating(readings, index) {
         if (readings.length === 1) {
             return readings[0];
-        }
-
-        function partitionIntoOnesAndZeros(readings, index) {
-            return readings.reduce(([ones, zeros], current) => {
-                if (current.charAt(index) === '0') {
-                    return [ones, [...zeros, current]]
-                } else {
-                    return [[...ones, current], zeros]
-                }
-            }, [[], []])
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
@@ -148,16 +145,6 @@ function calculateLifeSupportRating(report) {
     function calculateCO2ScrubberRating(readings, index) {
         if (readings.length === 1) {
             return readings[0];
-        }
-
-        function partitionIntoOnesAndZeros(readings, index) {
-            return readings.reduce(([ones, zeros], current) => {
-                if (current.charAt(index) === '0') {
-                    return [ones, [...zeros, current]]
-                } else {
-                    return [[...ones, current], zeros]
-                }
-            }, [[], []])
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
