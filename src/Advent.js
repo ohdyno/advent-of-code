@@ -65,55 +65,39 @@ function calculatePosition(position, commands) {
 }
 
 function calculatePowerConsumption(report) {
-    function weighBits(report) {
+    function findMostCommonBits(report) {
         /**
-         * Sum up each bit throughout the entire report.
-         *
-         * Example ['110', '100', '010'] => [2, 2, 0]
+         * For each bit in the report, calculate count(1) - count(0).
          */
-        function sumBitWeights(report) {
-            const sumWeights = new Array(report[0].length).fill(0);
+        function calculatePositiveNegativeDifferencesForEachBit(report) {
+            const bits = new Array(report[0].length).fill(0);
             report.forEach(number => {
-                [...number].forEach((digit, index) => sumWeights[index] += Number.parseInt(digit))
+                [...number].forEach((digit, index) => {
+                    if (Number.parseInt(digit) === 0) {
+                        bits[index]--;
+                    } else {
+                        bits[index]++;
+                    }
+                })
             })
-            return sumWeights;
+            return bits;
         }
 
-        /**
-         * For any bit where count(1) > count(0) within a report, its normalized weight is positive.
-         */
-        function normalize(bitWeights, report) {
-            return bitWeights.map(weight => weight - report.length / 2);
-        }
+        const bits = calculatePositiveNegativeDifferencesForEachBit(report);
 
-        return normalize(sumBitWeights(report), report)
+        return bits.map(bit => bit >= 0 ? 1 : 0)
     }
 
-    function convertWeightsToBits(weights, positiveBitValue, negativeBitValue) {
-        let bits = '';
-        for (let i = 0; i < weights.length; i++) {
-            if (weights[i] > 0) {
-                bits += positiveBitValue
-            } else {
-                bits += negativeBitValue
-            }
-        }
-        return bits;
+    function convertToGammaRate(weights) {
+        return Number.parseInt(weights.join(''), 2)
     }
 
-    function calculateMostCommonBits(weights) {
-        return convertWeightsToBits(weights, "1", "0");
+    function convertToEpsilonRate(weights) {
+        return Number.parseInt(weights.map(weight => weight === 0 ? 1 : 0).join(''), 2)
     }
 
-    function calculateLeastCommonBits(weights) {
-        return convertWeightsToBits(weights, "0", "1");
-    }
-
-    const weights = weighBits(report);
-    const mostCommonBits = calculateMostCommonBits(weights);
-    const leastCommonBits = calculateLeastCommonBits(weights);
-
-    return Number.parseInt(mostCommonBits, 2) * Number.parseInt(leastCommonBits, 2)
+    const mostCommonBits = findMostCommonBits(report);
+    return convertToGammaRate(mostCommonBits) * convertToEpsilonRate(mostCommonBits);
 }
 
 module.exports = {
