@@ -66,40 +66,41 @@ describe('Advent of Code 2021', () => {
             it('works with a single command in an array', () => {
                 const position = {
                     horizontal: 0,
-                    depth: 0
+                    depth: 0,
+                    aim: 0
                 };
-                const commands = ['forward 5']
+                const commands = ['down 5']
                 const result = calculatePosition(position, commands);
                 expect(result).toEqual({
-                    horizontal: 5,
-                    depth: 0
+                    horizontal: 0,
+                    depth: 0,
+                    aim: 5
                 })
             });
 
             it('works with multiple commands', () => {
                 const position = {
                     horizontal: 0,
-                    depth: 0
+                    depth: 0,
+                    aim: 0
                 };
                 const commands = [
-                    'forward 5',
                     'down 5',
-                    'forward 8',
-                    'up 3',
-                    'down 8',
-                    'forward 2',
+                    'forward 5',
                 ]
                 const result = calculatePosition(position, commands);
                 expect(result).toEqual({
-                    horizontal: 15,
-                    depth: 10
+                    horizontal: 5,
+                    depth: 25,
+                    aim: 5
                 })
             });
 
             it('works with commands from a file', () => {
                 const position = {
                     horizontal: 0,
-                    depth: 0
+                    depth: 0,
+                    aim: 0,
                 };
 
                 function readCommandsFromInputFile() {
@@ -114,9 +115,10 @@ describe('Advent of Code 2021', () => {
                 const result = calculatePosition(position, commands);
                 expect(result).toEqual({
                     horizontal: 1970,
-                    depth: 916
+                    aim: 916,
+                    depth: 1000556,
                 })
-                expect(result.horizontal * result.depth).toBe(1804520)
+                expect(result.horizontal * result.depth).toBe(1971095320)
             });
         })
     })

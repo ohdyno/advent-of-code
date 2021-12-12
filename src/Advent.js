@@ -40,20 +40,21 @@ function calculatePosition(position, commands) {
             if ("forward".includes(direction)) {
                 return {
                     ...position,
-                    horizontal: position.horizontal + unit
+                    horizontal: position.horizontal + unit,
+                    depth: position.depth + unit * position.aim
                 }
             }
 
             if ("down".includes(direction)) {
                 return {
                     ...position,
-                    depth: position.depth + unit
+                    aim: position.aim + unit
                 }
             }
 
             return {
                 ...position,
-                depth: position.depth - unit
+                aim: position.aim - unit
             };
         }
 
