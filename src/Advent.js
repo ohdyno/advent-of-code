@@ -1,3 +1,5 @@
+const assert = require("assert");
+
 function calculateDepthMeasurementIncreases(measurements, stepSize) {
     const reducer = (previous, current, currentIndex, measurements) => {
         const nextSignificantMeasurementIndex = currentIndex + stepSize;
@@ -121,9 +123,42 @@ function calculatePowerConsumption(report) {
     return convertToGammaRate(mostCommonBits) * convertToEpsilonRate(mostCommonBits);
 }
 
+function calculateLifeSupportRating(report) {
+    // Take each index, sort each reading into 1s and 0s bucket. The bigger bucket is used for next recursion.
+    // Recursion stops when the bigger bucket is of size one.
+
+    function calculateOxygenGeneratorRating(readings, index) {
+        if (readings.length === 1) {
+            return readings[0];
+        }
+
+        function bucketSortAtIndex(readings, index) {
+            const ones = []
+            const zeros = []
+            readings.forEach(reading => {
+                if (reading.charAt(index) === '0') {
+                    zeros.push(reading)
+                } else {
+                    ones.push(reading)
+                }
+            })
+            return [ones, zeros];
+        }
+
+        const [ones, zeros] = bucketSortAtIndex(readings, index);
+        if (ones.length >= zeros.length) {
+            return calculateOxygenGeneratorRating(ones, index+1);
+        }
+        return calculateOxygenGeneratorRating(zeros, index+1);
+    }
+
+    return calculateOxygenGeneratorRating(report, 0);
+}
+
 module.exports = {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
     calculatePosition,
     calculatePowerConsumption,
+    calculateLifeSupportRating,
 }
