@@ -5,17 +5,8 @@ const {
     calculatePowerConsumption,
     calculateLifeSupportRating,
 } = require("./Advent");
-const fs = require('fs');
-const path = require("path");
-const parse = require("./InputParser");
 
-function readInputFile(fileName) {
-    const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
-    return fs.readFileSync(filePath)
-        .toString()
-        .split("\n")
-        .filter((command) => command.length > 0);
-}
+const parse = require("./InputParser");
 
 describe('Advent of Code 2021', () => {
     describe('day 1', () => {
