@@ -20,20 +20,37 @@ function parse(fileName) {
                 return;
             }
 
-            if (result.numbersDrawn) {
-                const row = line.split(/\s+/).map(number => Number.parseInt(number));
-                const newBoard = [row];
-                if (result.boards.length === 0) {
-                    result.boards.push(newBoard)
-                } else {
-                    if (result.boards[result.boards.length - 1].length === 5) {
-                        result.boards.push(newBoard)
-                    } else {
-                        result.boards[result.boards.length - 1].push(row)
+            function handleBoardRow(line) {
+                function isTheBeginningOfANewBoard(boards) {
+                    function lastBoardIsComplete() {
+                        return boards[boards.length - 1].length === 5;
                     }
+
+                    function hasNoBoards() {
+                        return boards.length === 0;
+                    }
+
+                    return hasNoBoards() || lastBoardIsComplete();
                 }
-            } else {
+
+                const row = line.split(/\s+/).map(number => Number.parseInt(number));
+
+                if (isTheBeginningOfANewBoard(result.boards)) {
+                    result.boards.push([row])
+                } else {
+                    const lastBoard = result.boards[result.boards.length - 1];
+                    lastBoard.push(row)
+                }
+            }
+
+            function handleNumbersDrawn(line) {
                 result.numbersDrawn = line.split(',').map(number => Number.parseInt(number));
+            }
+
+            if (result.numbersDrawn) {
+                handleBoardRow(line);
+            } else {
+                handleNumbersDrawn(line);
             }
         }
 
