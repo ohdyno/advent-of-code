@@ -24,6 +24,28 @@ function day1Parser(rl) {
     }
 }
 
+function day2Parser(rl) {
+    return (resolve) => {
+        let result = [];
+
+        function handleLine(line, result) {
+            if (line.length === 0) {
+                return result
+            }
+
+            return [...result, line]
+        }
+
+        rl.on('line', (line) => {
+            result = handleLine(line, result);
+        })
+
+        rl.on('close', () => {
+            resolve(result);
+        })
+    }
+}
+
 function day4Parser(rl) {
     return (resolve) => {
 
@@ -99,6 +121,8 @@ function getSpecificDayInputParser(fileName) {
     switch (fileName) {
         case 'day-1':
             return day1Parser(rl)
+        case 'day-2':
+            return day2Parser(rl)
         case 'day-4':
             return day4Parser(rl)
         default:

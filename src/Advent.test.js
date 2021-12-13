@@ -95,14 +95,14 @@ describe('Advent of Code 2021', () => {
                 })
             });
 
-            it('works with commands from a file', () => {
+            it('works with commands from a file', async () => {
                 const position = {
                     horizontal: 0,
                     depth: 0,
                     aim: 0,
                 };
 
-                const commands = readInputFile('day-2')
+                const commands = await parse('day-2')
                 const result = calculatePosition(position, commands);
                 expect(result).toEqual({
                     horizontal: 1970,
