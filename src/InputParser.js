@@ -24,7 +24,7 @@ function day1Parser(rl) {
     }
 }
 
-function day2Parser(rl) {
+function parseLinesIntoArray(rl) {
     return (resolve) => {
         let result = [];
 
@@ -122,7 +122,8 @@ function getSpecificDayInputParser(fileName) {
         case 'day-1':
             return day1Parser(rl)
         case 'day-2':
-            return day2Parser(rl)
+        case 'day-3':
+            return parseLinesIntoArray(rl);
         case 'day-4':
             return day4Parser(rl)
         default:

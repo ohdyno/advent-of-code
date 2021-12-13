@@ -21,6 +21,19 @@ describe('Input file parser', () => {
             ])
         })
     })
+
+    describe('day 3 inputs', () => {
+        it('parse the inputs into an array', async () => {
+            const result = await parse('day-3');
+            expect(result.slice(0, 5)).toStrictEqual([
+                '111110110111',
+                '100111000111',
+                '011101111101',
+                '011011010010',
+                '001010001010',
+            ])
+        })
+    })
     describe('day 4 inputs', () => {
         it('extracts the numbers drawn', async () => {
             const {numbersDrawn} = await parse('day-4');

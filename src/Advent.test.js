@@ -135,12 +135,13 @@ describe('Advent of Code 2021', () => {
                 expect(result).toBe(198)
             })
 
-            it('calculates from the input file', () => {
-                const report = readInputFile('day-3')
+            it('calculates from the input file', async () => {
+                const report = await parse('day-3')
                 const result = calculatePowerConsumption(report);
                 expect(result).toBe(3969000)
             })
         });
+
         describe('calculate life support rating', () => {
             it('calculates from an array', () => {
                 const report = [
@@ -161,8 +162,8 @@ describe('Advent of Code 2021', () => {
                 expect(result).toBe(230)
             })
 
-            it('calculates from the input file', () => {
-                const report = readInputFile('day-3')
+            it('calculates from the input file', async () => {
+                const report = await parse('day-3')
                 const result = calculateLifeSupportRating(report);
                 expect(result).toBe(4267809)
             })
