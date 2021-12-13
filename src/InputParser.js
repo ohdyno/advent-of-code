@@ -3,13 +3,13 @@ const fs = require('fs')
 const readline = require('readline')
 
 function parse(fileName) {
-    const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
-    const rl = readline.createInterface({
-        input: fs.createReadStream(filePath),
-        terminal: false
-    });
-
     return new Promise((resolve, reject) => {
+        const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
+        const rl = readline.createInterface({
+            input: fs.createReadStream(filePath),
+            terminal: false
+        });
+
         const result = {
             boards: [],
             numbersDrawn: undefined,
