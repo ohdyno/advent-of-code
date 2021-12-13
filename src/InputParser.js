@@ -10,20 +10,20 @@ function parse(fileName) {
             terminal: false
         });
 
-        const result = {
+        let result = {
             boards: [],
             numbersDrawn: undefined,
         };
 
-        function handleLine(line) {
+        function handleLine(line, result) {
             if (line.length === 0) {
-                return;
+                return result;
             }
 
-            function handleBoardRow(line) {
+            function handleBoardRow(line, result) {
                 function isTheBeginningOfANewBoard(boards) {
                     function lastBoardIsComplete() {
-                        return boards[boards.length - 1].length === 5;
+                        return boards.at(-1).length === 5;
                     }
 
                     function hasNoBoards() {
@@ -34,28 +34,36 @@ function parse(fileName) {
                 }
 
                 const row = line.split(/\s+/).map(number => Number.parseInt(number));
+                const boards = result.boards;
 
-                if (isTheBeginningOfANewBoard(result.boards)) {
-                    result.boards.push([row])
-                } else {
-                    const lastBoard = result.boards[result.boards.length - 1];
-                    lastBoard.push(row)
+                if (isTheBeginningOfANewBoard(boards)) {
+                    return {
+                        ...result,
+                        boards: [...boards, [row]]
+                    }
+                }
+
+                return {
+                    ...result,
+                    boards: [...(boards.slice(0, -1)), [...(boards.at(-1)), row]]
                 }
             }
 
-            function handleNumbersDrawn(line) {
-                result.numbersDrawn = line.split(',').map(number => Number.parseInt(number));
+            function handleNumbersDrawn(line, result) {
+                return {
+                    ...result,
+                    numbersDrawn: line.split(',').map(number => Number.parseInt(number))
+                }
             }
 
             if (result.numbersDrawn) {
-                handleBoardRow(line);
-            } else {
-                handleNumbersDrawn(line);
+                return handleBoardRow(line, result);
             }
+            return handleNumbersDrawn(line, result);
         }
 
         rl.on('line', (line) => {
-            handleLine(line);
+            result = handleLine(line, result);
         })
 
         rl.on('close', () => {
