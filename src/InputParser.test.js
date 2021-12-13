@@ -1,6 +1,12 @@
 const parse = require('./InputParser')
 
 describe('Input file parser', () => {
+    describe('day 1 inputs', () => {
+        it('parse the inputs into an array of numbers', async () => {
+            const result = await parse('day-1');
+            expect(result.slice(0, 5)).toStrictEqual([159, 170, 171, 170, 168,])
+        })
+    })
     describe('day 4 inputs', () => {
         it('extracts the numbers drawn', async () => {
             const {numbersDrawn} = await parse('day-4');

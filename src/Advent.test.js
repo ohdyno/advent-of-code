@@ -7,6 +7,7 @@ const {
 } = require("./Advent");
 const fs = require('fs');
 const path = require("path");
+const parse = require("./InputParser");
 
 function readInputFile(fileName) {
     const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
@@ -31,8 +32,8 @@ describe('Advent of Code 2021', () => {
                 expect(result).toBe(7);
             })
 
-            it('calculates the production inputs', () => {
-                const measurements = readInputFile('day-1').map(input => Number.parseInt(input));
+            it('calculates the production inputs', async () => {
+                const measurements = await parse('day-1');
                 const result = depthMeasurementIncreases(measurements);
                 expect(result).toBe(1451);
             });
@@ -51,8 +52,8 @@ describe('Advent of Code 2021', () => {
                 expect(result).toBe(5);
             })
 
-            it('calculates the production inputs', () => {
-                const measurements = readInputFile('day-1').map(input => Number.parseInt(input));
+            it('calculates the production inputs', async () => {
+                const measurements = await parse('day-1');
                 const result = depthMeasurementWindowIncreases(measurements);
                 expect(result).toBe(1395);
             });
@@ -165,6 +166,12 @@ describe('Advent of Code 2021', () => {
                 const result = calculateLifeSupportRating(report);
                 expect(result).toBe(4267809)
             })
+        });
+    })
+
+    describe('day 4', () => {
+        it('calculates the final score for the winning bingo board', function () {
+
         });
     })
 })

@@ -2,13 +2,30 @@ const path = require('path')
 const fs = require('fs')
 const readline = require('readline')
 
-function parse(fileName) {
-    return new Promise((resolve, reject) => {
-        const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
-        const rl = readline.createInterface({
-            input: fs.createReadStream(filePath),
-            terminal: false
-        });
+function day1Parser(rl) {
+    return (resolve) => {
+        let result = [];
+
+        function handleLine(line, result) {
+            if (line.length === 0) {
+                return result
+            }
+
+            return [...result, Number.parseInt(line)]
+        }
+
+        rl.on('line', (line) => {
+            result = handleLine(line, result);
+        })
+
+        rl.on('close', () => {
+            resolve(result);
+        })
+    }
+}
+
+function day4Parser(rl) {
+    return (resolve) => {
 
         let result = {
             boards: [],
@@ -69,7 +86,30 @@ function parse(fileName) {
         rl.on('close', () => {
             resolve(result);
         })
-    })
+    }
+}
+
+function getSpecificDayInputParser(fileName) {
+    const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
+    const rl = readline.createInterface({
+        input: fs.createReadStream(filePath),
+        terminal: false
+    });
+
+    switch (fileName) {
+        case 'day-1':
+            return day1Parser(rl)
+        case 'day-4':
+            return day4Parser(rl)
+        default:
+            return (_, reject) => reject(`does not know how to handle ${fileName}`)
+    }
+
+}
+
+function parse(fileName) {
+    const parseSpecificDayInput = getSpecificDayInputParser(fileName);
+    return new Promise(parseSpecificDayInput)
 }
 
 module.exports = parse;
