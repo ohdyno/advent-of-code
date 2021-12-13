@@ -157,6 +157,25 @@ function calculateLifeSupportRating(report) {
 
 function calculateBingoBoardScore({numbersDrawn, boards}) {
     function selectWinningBoard(numbersDrawn, boards) {
+        const numberLocations = boards.map(board => {
+            let locations = new Map();
+            board.forEach((row, rowIndex) => {
+                row.forEach((number, columnIndex) => {
+                    const coordinate = {
+                        row: rowIndex,
+                        column: columnIndex
+                    }
+
+                    if (locations.has(number)) {
+                        locations.set(number, [...locations.get(number), coordinate])
+                    } else {
+                        locations.set(number, [coordinate])
+                    }
+                })
+            })
+            return locations;
+        })
+
         const initialScore = {
             rows: [0, 0, 0, 0, 0],
             columns: [0, 0, 0, 0, 0],
@@ -165,25 +184,16 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
 
         let scores = boards.map(() => initialScore);
 
-        function findCoordinates(number, board) {
-            let coordinates = []
-            board.forEach((row, rowIndex) => {
-                row.forEach((column, columnIndex) => {
-                    if (number === column) {
-                        const coordinate = {
-                            row: rowIndex,
-                            column: columnIndex
-                        };
-                        coordinates = [...coordinates, coordinate]
-                    }
-                })
-            })
-            return coordinates;
+        function findCoordinates(number, locations) {
+            if (locations.has(number)) {
+                return locations.get(number);
+            }
+            return [];
         }
 
         numbersDrawn.forEach(number => {
-            boards.forEach((board, index) => {
-                const coordinates = findCoordinates(number, board)
+            numberLocations.forEach((locations, index) => {
+                const coordinates = findCoordinates(number, locations)
                 coordinates.forEach(coordinate => {
                     scores[index].rows[coordinate.row]++;
                     scores[index].columns[coordinate.column]++;
