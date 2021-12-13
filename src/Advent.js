@@ -134,7 +134,7 @@ function calculateLifeSupportRating(report) {
 
     function calculateOxygenGeneratorRating(readings, index) {
         if (readings.length === 1) {
-            return Number.parseInt(readings[0],2);
+            return Number.parseInt(readings[0], 2);
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
@@ -144,7 +144,7 @@ function calculateLifeSupportRating(report) {
 
     function calculateCO2ScrubberRating(readings, index) {
         if (readings.length === 1) {
-            return Number.parseInt(readings[0],2);
+            return Number.parseInt(readings[0], 2);
         }
 
         const [ones, zeros] = partitionIntoOnesAndZeros(readings, index);
@@ -156,7 +156,54 @@ function calculateLifeSupportRating(report) {
 }
 
 function calculateBingoBoardScore({numbersDrawn, boards}) {
-    return boards[0]
+    function selectWinningBoard(numbersDrawn, boards) {
+        const initialScore = {
+            rows: [0, 0, 0, 0, 0],
+            columns: [0, 0, 0, 0, 0],
+            bingo: false,
+        };
+
+        let scores = boards.map(() => initialScore);
+
+        function findCoordinates(number, board) {
+            let coordinates = []
+            board.forEach((row, rowIndex) => {
+                row.forEach((column, columnIndex) => {
+                    if (number === column) {
+                        const coordinate = {
+                            row: rowIndex,
+                            column: columnIndex
+                        };
+                        coordinates = [...coordinates, coordinate]
+                    }
+                })
+            })
+            return coordinates;
+        }
+
+        numbersDrawn.forEach(number => {
+            boards.forEach((board, index) => {
+                const coordinates = findCoordinates(number, board)
+                coordinates.forEach(coordinate => {
+                    scores[index].rows[coordinate.row]++;
+                    scores[index].columns[coordinate.column]++;
+
+                    if (scores[index].rows[coordinate.row] === 5 || scores[index].columns[coordinate.column] === 5) {
+                        scores[index].bingo = true
+                    }
+                })
+            })
+        })
+
+        const winningBoardIndex = scores.findIndex(score => score.bingo);
+        if (winningBoardIndex >= 0) {
+            return boards[winningBoardIndex];
+        }
+        return []
+    }
+
+    const uniqueNumbersDrawn = new Set(numbersDrawn)
+    return selectWinningBoard(uniqueNumbersDrawn, boards)
 }
 
 module.exports = {
