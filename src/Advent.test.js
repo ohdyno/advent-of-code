@@ -4,6 +4,7 @@ const {
     calculatePosition,
     calculatePowerConsumption,
     calculateLifeSupportRating,
+    calculateBingoBoardScore,
 } = require("./Advent");
 
 const parse = require("./InputParser");
@@ -162,8 +163,31 @@ describe('Advent of Code 2021', () => {
     })
 
     describe('day 4', () => {
-        it('calculates the final score for the winning bingo board', function () {
+        describe('calculating the final score for the winning bingo board', () => {
+            it('selects the winning board', () => {
+                const input = {
+                    numbersDrawn: [82, 91, 54, 13, 90],
+                    boards: [
+                        [
+                            [14, 86, 50, 89, 49],
+                            [10, 85, 33, 46, 87],
+                            [82, 91, 54, 13, 90],
+                            [63, 88, 75, 99, 79],
+                            [74, 31,  4,  0, 71],
+                        ],
+                        [
+                            [56,  3, 70,  2, 22],
+                            [44, 63, 10, 95,  8],
+                            [92, 62, 83,  4, 93],
+                            [74, 80,  5, 11, 68],
+                            [24, 50, 42, 65, 72],
+                        ]
+                    ]
+                }
 
+                const result = calculateBingoBoardScore(input);
+                expect(result).toStrictEqual(input.boards[0])
+            })
         });
     })
 })

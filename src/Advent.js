@@ -155,10 +155,15 @@ function calculateLifeSupportRating(report) {
     return calculateOxygenGeneratorRating(report, 0) * calculateCO2ScrubberRating(report, 0);
 }
 
+function calculateBingoBoardScore({numbersDrawn, boards}) {
+    return boards[0]
+}
+
 module.exports = {
     depthMeasurementIncreases,
     depthMeasurementWindowIncreases,
     calculatePosition,
     calculatePowerConsumption,
     calculateLifeSupportRating,
+    calculateBingoBoardScore,
 }
