@@ -182,7 +182,8 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
             bingo: false,
         };
 
-        let scores = boards.map(() => initialScore);
+        const scores = boards.map(() => initialScore);
+        const sums = boards.map(board => board.flat().reduce((a, b) => a + b))
 
         function findCoordinates(number, locations) {
             if (locations.has(number)) {
@@ -195,6 +196,7 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
             numberLocations.forEach((locations, index) => {
                 const coordinates = findCoordinates(number, locations)
                 coordinates.forEach(coordinate => {
+                    sums[index] -= number;
                     scores[index].rows[coordinate.row]++;
                     scores[index].columns[coordinate.column]++;
 
@@ -207,9 +209,9 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
 
         const winningBoardIndex = scores.findIndex(score => score.bingo);
         if (winningBoardIndex >= 0) {
-            return boards[winningBoardIndex];
+            return sums[winningBoardIndex];
         }
-        return []
+        return -1
     }
 
     const uniqueNumbersDrawn = new Set(numbersDrawn)

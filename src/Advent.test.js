@@ -164,16 +164,16 @@ describe('Advent of Code 2021', () => {
 
     describe('day 4', () => {
         describe('calculating the final score for the winning bingo board', () => {
-            it('selects the winning board', () => {
+            it('calculates the winning board total', () => {
                 const input = {
-                    numbersDrawn: [82, 91, 54, 13, 90],
+                    numbersDrawn: [82, 91, 54, 21, 90],
                     boards: [
                         [
-                            [14, 86, 50, 89, 49],
-                            [10, 85, 33, 46, 87],
-                            [82, 91, 54, 13, 90],
-                            [63, 88, 75, 99, 79],
-                            [74, 31, 4, 0, 71],
+                            [1, 2, 3, 4, 5],
+                            [6, 7, 8, 9, 10],
+                            [82, 91, 54, 21, 90],
+                            [11, 12, 13, 14, 15],
+                            [16, 17, 18, 19, 20],
                         ],
                         [
                             [56, 3, 70, 2, 22],
@@ -186,7 +186,7 @@ describe('Advent of Code 2021', () => {
                 }
 
                 const result = calculateBingoBoardScore(input);
-                expect(result).toStrictEqual(input.boards[0])
+                expect(result).toStrictEqual(210)
             })
         });
     })
