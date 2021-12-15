@@ -204,22 +204,33 @@ function calculateBingoBoardScore({numbersDrawn, boards}, wantQuickestWinningBoa
 
         function processNumbersDrawn(numbersDrawn, processedBoards) {
             return processedBoards.map(board => {
-                return Array.from(new Set(numbersDrawn)).reduce((board, number) => {
-                    if (board.bingo || !board.locations[number]) {
+                return numbersDrawn.reduce((board, number) => {
+                    if (board.bingo) {
                         return board
                     }
 
-                    const score = board.locations[number].reduce((score, coordinate) => ({
-                        rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
-                        columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
-                    }), board.score);
+                    function updateBoard(board, number) {
+                        const score = board.locations[number].reduce((score, coordinate) => ({
+                            rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
+                            columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
+                        }), board.score);
+
+                        return {
+                            ...board,
+                            numbers: [...board.numbers, number],
+                            sum: board.sum - number,
+                            score,
+                            bingo: score.rows.some(count => count === 5) || score.columns.some(count => count === 5)
+                        };
+                    }
+
+                    if (board.locations[number]) {
+                        return updateBoard(board, number);
+                    }
 
                     return {
                         ...board,
-                        sum: board.sum - number,
-                        numbers: [...board.numbers, number],
-                        score,
-                        bingo: score.rows.some(count => count === 5) || score.columns.some(count => count === 5)
+                        numbers: [...board.numbers, number]
                     };
                 }, board);
             });

@@ -199,7 +199,7 @@ describe('Advent of Code 2021', () => {
             it('calculates the winning board score from input file', async () => {
                 const input = await parse('day-4')
                 expect(calculateBingoBoardScore(input, true)).toStrictEqual(32844)
-                expect(calculateBingoBoardScore(input, false)).toStrictEqual(9075)
+                expect(calculateBingoBoardScore(input, false)).toStrictEqual(4920)
             })
         });
     })
