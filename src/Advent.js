@@ -156,66 +156,85 @@ function calculateLifeSupportRating(report) {
 }
 
 function calculateBingoBoardScore({numbersDrawn, boards}) {
-    function selectWinningBoard(numbersDrawn, boards) {
-        const numberLocations = boards.map(board => {
-            let locations = new Map();
-            board.forEach((row, rowIndex) => {
-                row.forEach((number, columnIndex) => {
-                    const coordinate = {
-                        row: rowIndex,
-                        column: columnIndex
-                    }
+    function play(numbersDrawn, boards) {
+        function processBoards(boards) {
+            return boards.map(board => {
+                /**
+                 * Map the location (row, column) for each number on the board
+                 */
+                function mapEntries(board) {
+                    return board.reduce((numberLocations, row, rowIndex) =>
+                        row.reduce((numberLocations, number, columnIndex) => {
+                            const location = {
+                                row: rowIndex,
+                                column: columnIndex
+                            }
 
-                    if (locations.has(number)) {
-                        locations.set(number, [...locations.get(number), coordinate])
-                    } else {
-                        locations.set(number, [coordinate])
-                    }
-                })
-            })
-            return locations;
-        })
+                            const previousLocations = numberLocations[number] || [];
+                            return {
+                                ...numberLocations,
+                                [number]: [...previousLocations, location]
+                            }
+                        }, numberLocations), {})
+                }
 
-        const initialScore = {
-            rows: [0, 0, 0, 0, 0],
-            columns: [0, 0, 0, 0, 0],
-            bingo: false,
-        };
+                /**
+                 * Calculate the sum of all numbers on the board.
+                 */
+                function sum(board) {
+                    return board.flat().reduce((a, b) => a + b);
+                }
 
-        const scores = boards.map(() => initialScore);
-        const sums = boards.map(board => board.flat().reduce((a, b) => a + b))
-
-        function findCoordinates(number, locations) {
-            if (locations.has(number)) {
-                return locations.get(number);
-            }
-            return [];
+                return {
+                    locations: mapEntries(board),
+                    score: {
+                        rows: [0, 0, 0, 0, 0],
+                        columns: [0, 0, 0, 0, 0],
+                    },
+                    sum: sum(board),
+                    bingo: false
+                }
+            });
         }
 
-        numbersDrawn.forEach(number => {
-            numberLocations.forEach((locations, index) => {
-                const coordinates = findCoordinates(number, locations)
-                coordinates.forEach(coordinate => {
-                    sums[index] -= number;
-                    scores[index].rows[coordinate.row]++;
-                    scores[index].columns[coordinate.column]++;
+        function processNumbersDrawn(numbersDrawn, processedBoards) {
+            return Array.from(new Set(numbersDrawn)).reduce((processed, number) =>
+                processed.map(({locations, score, sum, bingo}) => {
+                    const coordinates = locations[number] || []
+                    const result = coordinates.reduce(({sum, score, bingo}, coordinate) => {
+                        if (bingo) {
+                            return {sum, score, bingo}
+                        }
 
-                    if (scores[index].rows[coordinate.row] === 5 || scores[index].columns[coordinate.column] === 5) {
-                        scores[index].bingo = true
+                        const updatedScore = {
+                            rows: score.rows.map(row => row === coordinate.row ? row + 1 : row),
+                            columns: score.columns.map(column => column === coordinate.column ? column + 1 : column)
+                        }
+
+                        return {
+                            sum: sum - number,
+                            score: updatedScore,
+                            bingo: updatedScore.rows[coordinate.row] === 5 || updatedScore.columns[coordinate.column] === 5
+                        }
+                    }, {sum, score, bingo})
+
+                    return {
+                        locations,
+                        ...result
                     }
-                })
-            })
-        })
-
-        const winningBoardIndex = scores.findIndex(score => score.bingo);
-        if (winningBoardIndex >= 0) {
-            return sums[winningBoardIndex];
+                }), processedBoards);
         }
-        return -1
+
+        return processNumbersDrawn(numbersDrawn, processBoards(boards));
     }
 
-    const uniqueNumbersDrawn = new Set(numbersDrawn)
-    return selectWinningBoard(uniqueNumbersDrawn, boards)
+    const processed = play(numbersDrawn, boards);
+
+    const winningBoard = processed.find(({bingo}) => bingo);
+    if (winningBoard) {
+        return winningBoard.sum;
+    }
+    return -1
 }
 
 module.exports = {
