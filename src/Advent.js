@@ -212,6 +212,7 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
                         }
 
                         return {
+                            number,
                             sum: sum - number,
                             score: updatedScore,
                             bingo: updatedScore.rows[coordinate.row] === 5 || updatedScore.columns[coordinate.column] === 5
@@ -231,8 +232,9 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
     const processed = play(numbersDrawn, boards);
 
     const winningBoard = processed.find(({bingo}) => bingo);
+
     if (winningBoard) {
-        return winningBoard.sum;
+        return winningBoard.sum * winningBoard.number;
     }
     return -1
 }

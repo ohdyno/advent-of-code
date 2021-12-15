@@ -186,7 +186,7 @@ describe('Advent of Code 2021', () => {
                 }
 
                 const result = calculateBingoBoardScore(input);
-                expect(result).toStrictEqual(210)
+                expect(result).toStrictEqual(210 * 90)
             })
         });
     })
