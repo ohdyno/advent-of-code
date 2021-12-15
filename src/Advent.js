@@ -155,7 +155,7 @@ function calculateLifeSupportRating(report) {
     return calculateOxygenGeneratorRating(report, 0) * calculateCO2ScrubberRating(report, 0);
 }
 
-function calculateBingoBoardScore({numbersDrawn, boards}) {
+function calculateBingoBoardScore({numbersDrawn, boards}, wantQuickestWinningBoard) {
     function play(numbersDrawn, boards) {
         function processBoards(boards) {
             return boards.map(board => {
@@ -203,18 +203,16 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
         }
 
         function processNumbersDrawn(numbersDrawn, processedBoards) {
-            return Array.from(new Set(numbersDrawn)).reduce((processed, number) =>
-                processed.map(board => {
+            return processedBoards.map(board => {
+                return Array.from(new Set(numbersDrawn)).reduce((board, number) => {
                     if (board.bingo || !board.locations[number]) {
                         return board
                     }
 
-                    const score = board.locations[number].reduce((score, coordinate) => {
-                        return {
-                            rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
-                            columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
-                        }
-                    }, board.score);
+                    const score = board.locations[number].reduce((score, coordinate) => ({
+                        rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
+                        columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
+                    }), board.score);
 
                     return {
                         ...board,
@@ -223,7 +221,8 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
                         score,
                         bingo: score.rows.some(count => count === 5) || score.columns.some(count => count === 5)
                     };
-                }), processedBoards);
+                }, board);
+            });
         }
 
         const processedBoards = processBoards(boards);
@@ -235,7 +234,7 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
     }
 
     const result = play(numbersDrawn, boards);
-    const winningBoard = sortByQuickestToWin(result).at(0)
+    const winningBoard = sortByQuickestToWin(result).at(wantQuickestWinningBoard ? 0 : -1)
     return winningBoard.sum * winningBoard.numbers.at(-1);
 }
 
