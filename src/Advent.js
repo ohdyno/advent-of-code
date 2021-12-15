@@ -163,19 +163,23 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
                  * Map the location (row, column) for each number on the board
                  */
                 function mapEntries(board) {
-                    return board.reduce((numberLocations, row, rowIndex) =>
-                        row.reduce((numberLocations, number, columnIndex) => {
-                            const location = {
+                    return board.reduce((numberLocations, row, rowIndex) => {
+                        const locationsForNumbersInRow = row.map((number, columnIndex) => ({
+                            number,
+                            location: {
                                 row: rowIndex,
                                 column: columnIndex
                             }
+                        }));
 
-                            const previousLocations = numberLocations[number] || [];
+                        return locationsForNumbersInRow.reduce((locations, {number, location}) => {
+                            const previousLocations = locations[number] || [];
                             return {
-                                ...numberLocations,
+                                ...locations,
                                 [number]: [...previousLocations, location]
                             }
-                        }, numberLocations), {})
+                        }, numberLocations)
+                    }, {})
                 }
 
                 /**
@@ -205,27 +209,19 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
                         return board
                     }
 
-                    const result = board.locations[number].reduce(({sum, score, bingo}, coordinate) => {
-                        if (bingo) {
-                            return {sum, score, bingo}
-                        }
-
-                        const updatedScore = {
+                    const score = board.locations[number].reduce((score, coordinate) => {
+                        return {
                             rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
                             columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
                         }
-
-                        return {
-                            sum: sum - number,
-                            score: updatedScore,
-                            bingo: updatedScore.rows[coordinate.row] === 5 || updatedScore.columns[coordinate.column] === 5
-                        };
-                    }, {sum: board.sum, score: board.score, bingo: board.bingo});
+                    }, board.score);
 
                     return {
                         ...board,
+                        sum: board.sum - number,
                         numbers: [...board.numbers, number],
-                        ...result
+                        score,
+                        bingo: score.rows.some(count => count === 5) || score.columns.some(count => count === 5)
                     };
                 }), processedBoards);
         }
@@ -234,15 +230,13 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
         return processNumbersDrawn(numbersDrawn, processedBoards);
     }
 
-    const processed = play(numbersDrawn, boards);
-
-    const sorted = processed.filter(({bingo}) => bingo).sort((a, b) => a.numbers.length - b.numbers.length)
-
-    const winningBoard = sorted[0]
-    if (winningBoard) {
-        return winningBoard.sum * winningBoard.numbers.at(-1);
+    function sortByQuickestToWin(result) {
+        return result.filter(({bingo}) => bingo).sort((a, b) => a.numbers.length - b.numbers.length);
     }
-    return -1
+
+    const result = play(numbersDrawn, boards);
+    const winningBoard = sortByQuickestToWin(result).at(0)
+    return winningBoard.sum * winningBoard.numbers.at(-1);
 }
 
 module.exports = {
