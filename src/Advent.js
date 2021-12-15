@@ -192,49 +192,55 @@ function calculateBingoBoardScore({numbersDrawn, boards}) {
                         columns: [0, 0, 0, 0, 0],
                     },
                     sum: sum(board),
-                    bingo: false
+                    bingo: false,
+                    numbers: []
                 }
             });
         }
 
         function processNumbersDrawn(numbersDrawn, processedBoards) {
             return Array.from(new Set(numbersDrawn)).reduce((processed, number) =>
-                processed.map(({locations, score, sum, bingo}) => {
-                    const coordinates = locations[number] || []
-                    const result = coordinates.reduce(({sum, score, bingo}, coordinate) => {
+                processed.map(board => {
+                    if (board.bingo || !board.locations[number]) {
+                        return board
+                    }
+
+                    const result = board.locations[number].reduce(({sum, score, bingo}, coordinate) => {
                         if (bingo) {
                             return {sum, score, bingo}
                         }
 
                         const updatedScore = {
-                            rows: score.rows.map(row => row === coordinate.row ? row + 1 : row),
-                            columns: score.columns.map(column => column === coordinate.column ? column + 1 : column)
+                            rows: score.rows.map((count, row) => row === coordinate.row ? count + 1 : count),
+                            columns: score.columns.map((count, column) => column === coordinate.column ? count + 1 : count)
                         }
 
                         return {
-                            number,
                             sum: sum - number,
                             score: updatedScore,
                             bingo: updatedScore.rows[coordinate.row] === 5 || updatedScore.columns[coordinate.column] === 5
-                        }
-                    }, {sum, score, bingo})
+                        };
+                    }, {sum: board.sum, score: board.score, bingo: board.bingo});
 
                     return {
-                        locations,
+                        ...board,
+                        numbers: [...board.numbers, number],
                         ...result
-                    }
+                    };
                 }), processedBoards);
         }
 
-        return processNumbersDrawn(numbersDrawn, processBoards(boards));
+        const processedBoards = processBoards(boards);
+        return processNumbersDrawn(numbersDrawn, processedBoards);
     }
 
     const processed = play(numbersDrawn, boards);
 
-    const winningBoard = processed.find(({bingo}) => bingo);
+    const sorted = processed.filter(({bingo}) => bingo).sort((a, b) => a.numbers.length - b.numbers.length)
 
+    const winningBoard = sorted[0]
     if (winningBoard) {
-        return winningBoard.sum * winningBoard.number;
+        return winningBoard.sum * winningBoard.numbers.at(-1);
     }
     return -1
 }

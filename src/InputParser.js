@@ -68,7 +68,7 @@ function day4Parser(readline) {
                 return hasNoBoards() || lastBoardIsComplete();
             }
 
-            const row = line.split(/\s+/).map(number => Number.parseInt(number));
+            const row = line.trim().split(/\s+/).map(number => Number.parseInt(number));
             const boards = result.boards;
 
             if (isTheBeginningOfANewBoard(boards)) {
