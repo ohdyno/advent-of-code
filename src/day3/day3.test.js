@@ -2,7 +2,7 @@ const {
     calculatePowerConsumption,
     calculateLifeSupportRating,
     calculateBingoBoardScore,
-} = require("./Advent");
+} = require("./day3");
 
 const parse = require("../inputs/parser");
 
