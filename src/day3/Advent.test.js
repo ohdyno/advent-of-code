@@ -4,7 +4,7 @@ const {
     calculateBingoBoardScore,
 } = require("./Advent");
 
-const parse = require("./InputParser");
+const parse = require("../InputParser");
 
 describe('Advent of Code 2021', () => {
 
