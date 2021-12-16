@@ -1,4 +1,4 @@
-const parse = require('./InputParser')
+const parse = require('./parser')
 
 describe('Input file parser', () => {
     describe('day 1 inputs', () => {

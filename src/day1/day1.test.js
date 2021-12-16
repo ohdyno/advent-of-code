@@ -1,5 +1,5 @@
 const {depthMeasurementIncreases, depthMeasurementWindowIncreases} = require("./day1");
-const parse = require("../InputParser");
+const parse = require("../inputs/parser");
 
 describe('day 1', () => {
     describe('counting the number of times a depth measurement increases', () => {

@@ -105,7 +105,7 @@ function rejectFile(fileName) {
 }
 
 function createReadlineForFile(fileName) {
-    const filePath = path.join(__dirname, 'inputs', `${fileName}.txt`)
+    const filePath = path.join(__dirname, `${fileName}.txt`)
     return readline.createInterface({
         input: fs.createReadStream(filePath),
         terminal: false

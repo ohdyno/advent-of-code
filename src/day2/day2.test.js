@@ -1,5 +1,5 @@
 const {calculatePosition} = require("./day2");
-const parse = require("../InputParser");
+const parse = require("../inputs/parser");
 
 describe('day 2', () => {
     describe('calculating submarine position', () => {
