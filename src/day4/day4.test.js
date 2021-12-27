@@ -1,9 +1,9 @@
-const {calculateBingoBoardScore} = require("./day4");
+const {calculateBingoBoardScore, sumBoards} = require("./day4");
 
 const parse = require("../inputs/parser");
 
 describe('day 4', () => {
-    describe('calculating the final score for the winning bingo board', () => {
+    xdescribe('calculating the final score for the winning bingo board', () => {
         it('calculates the winning board score', () => {
             const input = {
                 numbersDrawn: [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1],
@@ -42,4 +42,47 @@ describe('day 4', () => {
             expect(calculateBingoBoardScore(input, false)).toStrictEqual(4920)
         })
     });
+
+    describe('calculating the sum of boards', () => {
+        it('works for a single board', () => {
+            const boards = [
+                [
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                ],
+            ]
+
+            const result = sumBoards(boards);
+
+            expect(result).toStrictEqual([25])
+        });
+
+        it('works for multiple boards', () => {
+            const boards = [
+                [
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                ],
+                [
+                    [10, 10, 10, 10, 10],
+                    [10, 10, 10, 10, 10],
+                    [10, 10, 10, 10, 10],
+                    [10, 10, 10, 10, 10],
+                    [10, 10, 10, 10, 10],
+                ],
+            ]
+
+            const result = sumBoards(boards);
+
+            expect(result).toStrictEqual([25, 250])
+        });
+
+    })
+
 })
