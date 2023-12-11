@@ -10,13 +10,13 @@ WITH
   ),
   calibration_values AS (
     SELECT
-      left(complete_number, 1) || right(complete_number, 1) AS VALUE
+      left(complete_number, 1) || right(complete_number, 1) AS calibration_value
     FROM
       numbers_only
     WHERE
       complete_number <> ''
   )
 SELECT
-  sum(VALUE::integer)
+  sum(calibration_value::integer)
 FROM
   calibration_values;
