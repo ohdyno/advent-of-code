@@ -1,40 +1,43 @@
-CREATE TABLE IF NOT EXISTS conversions
-(
-    word   text,
-    number text
-);
+CREATE TABLE IF NOT EXISTS conversions (word TEXT, number TEXT);
 
-DELETE
-FROM conversions;
-INSERT INTO conversions (word, number)
-VALUES ('one', '1'),
-       ('two', '2'),
-       ('three', '3'),
-       ('four', '4'),
-       ('five', '5'),
-       ('six', '6'),
-       ('seven', '7'),
-       ('eight', '8'),
-       ('nine', '9'),
-       ('1', '1'),
-       ('2', '2'),
-       ('3', '3'),
-       ('4', '4'),
-       ('5', '5'),
-       ('6', '6'),
-       ('7', '7'),
-       ('8', '8'),
-       ('9', '9')
-;
 
-CREATE TABLE IF NOT EXISTS lines
-(
-    line text
-);
-DELETE
-FROM lines;
-INSERT INTO lines (line)
-SELECT regexp_split_to_table('9vxfg
+DELETE FROM conversions;
+
+
+INSERT INTO
+  conversions (word, number)
+VALUES
+  ('one', '1'),
+  ('two', '2'),
+  ('three', '3'),
+  ('four', '4'),
+  ('five', '5'),
+  ('six', '6'),
+  ('seven', '7'),
+  ('eight', '8'),
+  ('nine', '9'),
+  ('1', '1'),
+  ('2', '2'),
+  ('3', '3'),
+  ('4', '4'),
+  ('5', '5'),
+  ('6', '6'),
+  ('7', '7'),
+  ('8', '8'),
+  ('9', '9');
+
+
+CREATE TABLE IF NOT EXISTS lines (LINE TEXT);
+
+
+DELETE FROM lines;
+
+
+INSERT INTO
+  lines (LINE)
+SELECT
+  regexp_split_to_table(
+    '9vxfg
 19qdlpmdrxone7sevennine
 1dzntwofour9nineffck
 7bx8hpldgzqjheight
@@ -1034,88 +1037,125 @@ rdkfxsix4tnmndhnxnv86
 two4dddpmrhh7fourthreeeight9
 slhdsxngfxszspppxxfftmxlptzhtwovp1
 4vmzcrhtdvnm6zfive5pkbhcxj
-', E'\n') as line;
+',
+    E'\n'
+  ) AS LINE;
 
-CREATE TABLE IF NOT EXISTS word_locations
-(
-    first_index int,
-    last_index  int,
-    word        text,
-    number      text,
-    line        text
+
+CREATE TABLE IF NOT EXISTS word_locations (
+  first_index int,
+  last_index int,
+  word TEXT,
+  number TEXT,
+  LINE TEXT
 );
-DELETE
-FROM word_locations;
-INSERT INTO word_locations (first_index, last_index, word, number, line)
-SELECT strpos(line, word) as first_index,
-       (length(line) - (strpos(reverse(line), reverse(word)) + length(word) - 1) +
-        1)                as last_index,
-       word,
-       number,
-       line
-FROM conversions,
-     lines
-WHERE line <> ''
-  AND strpos(line, word) > 0;
 
-CREATE TABLE IF NOT EXISTS extracted
-(
-    min  int,
-    max  int,
-    line text
-);
-DELETE
-FROM extracted;
 
-INSERT INTO extracted (min, max, line)
-SELECT min(first_index), max(last_index), line
-FROM word_locations
-GROUP BY line;
+DELETE FROM word_locations;
 
-DROP TABLE IF EXISTS min;
-CREATE TABLE IF NOT EXISTS min
-(
-    word   text,
-    number text,
-    index  integer,
-    line   text
-);
-DELETE
-FROM min;
 
-INSERT INTO min (word, number, index, line)
-SELECT word_locations.word, word_locations.number, extracted.min, extracted.line as line
-FROM extracted,
-     word_locations
-WHERE extracted.min = word_locations.first_index
+INSERT INTO
+  word_locations (first_index, last_index, word, number, LINE)
+SELECT
+  strpos(LINE, word) AS first_index,
+  (
+    length(LINE) - (
+      strpos(reverse(LINE), reverse(word)) + length(word) - 1
+    ) + 1
+  ) AS last_index,
+  word,
+  number,
+  LINE
+FROM
+  conversions,
+  lines
+WHERE
+  LINE <> ''
+  AND strpos(LINE, word) > 0;
+
+
+CREATE TABLE IF NOT EXISTS extracted (MIN int, MAX int, LINE TEXT);
+
+
+DELETE FROM extracted;
+
+
+INSERT INTO
+  extracted (MIN, MAX, LINE)
+SELECT
+  min(first_index),
+  max(last_index),
+  LINE
+FROM
+  word_locations
+GROUP BY
+  LINE;
+
+
+DROP TABLE IF EXISTS MIN;
+
+
+CREATE TABLE IF NOT EXISTS min(word TEXT, number TEXT, INDEX integer, LINE TEXT);
+
+
+DELETE FROM MIN;
+
+
+INSERT INTO
+  min(word, number, INDEX, LINE)
+SELECT
+  word_locations.word,
+  word_locations.number,
+  extracted.min,
+  extracted.line AS LINE
+FROM
+  extracted,
+  word_locations
+WHERE
+  extracted.min = word_locations.first_index
   AND extracted.line = word_locations.line
-ORDER BY line;
+ORDER BY
+  LINE;
 
-DROP TABLE IF EXISTS max;
 
-CREATE TABLE IF NOT EXISTS max
-(
-    word   text,
-    number text,
-    index  integer,
-    line   text
-);
+DROP TABLE IF EXISTS MAX;
 
-DELETE
-FROM max;
 
-INSERT INTO max (word, number, index, line)
-SELECT word_locations.word, word_locations.number, extracted.max, extracted.line as line
-FROM extracted,
-     word_locations
-WHERE extracted.max = word_locations.last_index
+CREATE TABLE IF NOT EXISTS max(word TEXT, number TEXT, INDEX integer, LINE TEXT);
+
+
+DELETE FROM MAX;
+
+
+INSERT INTO
+  max(word, number, INDEX, LINE)
+SELECT
+  word_locations.word,
+  word_locations.number,
+  extracted.max,
+  extracted.line AS LINE
+FROM
+  extracted,
+  word_locations
+WHERE
+  extracted.max = word_locations.last_index
   AND extracted.line = word_locations.line
-ORDER BY line;
+ORDER BY
+  LINE;
 
-WITH two_digits AS (SELECT max.line, min.number, max.number, min.number || max.number as two_digit_number
-                    FROM min
-                             INNER JOIN
-                         max
-                         ON min.line = max.line)
-SELECT sum(two_digit_number::integer) as sum
-FROM two_digits;
+
+WITH
+  two_digits AS (
+    SELECT
+      MAX.line,
+      MIN.number,
+      MAX.number,
+      MIN.number || MAX.number AS two_digit_number
+    FROM
+      MIN
+      INNER JOIN MAX ON MIN.line = MAX.line
+  )
+SELECT
+  sum(two_digit_number::integer) AS SUM
+FROM
+  two_digits;
