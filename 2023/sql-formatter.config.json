@@ -1,6 +1,11 @@
 {
   "language": "postgresql",
   "tabWidth": 2,
+  "indentStyle": "tabularRight",
   "keywordCase": "upper",
-  "linesBetweenQueries": 2
+  "linesBetweenQueries": 1,
+  "dataTypeCase": "upper",
+  "functionCase": "lower",
+  "identifierCase": "lower",
+  "newlineBeforeSemicolon": true
 }

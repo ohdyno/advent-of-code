@@ -1,14 +1,12 @@
-CREATE TABLE IF NOT EXISTS lines (LINE TEXT);
+CREATE TABLE IF NOT EXISTS lines (LINE TEXT)
+;
 
+   DELETE FROM lines
+;
 
-DELETE FROM lines;
-
-
-INSERT INTO
-  lines (LINE)
-SELECT
-  regexp_split_to_table(
-    'Game 1: 1 red, 5 blue, 1 green; 16 blue, 3 red; 6 blue, 5 red; 4 red, 7 blue, 1 green
+   INSERT INTO lines (LINE)
+   SELECT regexp_split_to_table(
+          'Game 1: 1 red, 5 blue, 1 green; 16 blue, 3 red; 6 blue, 5 red; 4 red, 7 blue, 1 green
            Game 2: 4 blue; 4 red, 3 blue, 1 green; 4 red, 9 blue, 2 green; 5 blue, 7 green, 4 red
            Game 3: 10 blue; 7 blue, 1 green; 19 blue, 1 green, 9 red
            Game 4: 2 green; 14 blue, 14 red, 4 green; 12 red, 11 green, 13 blue; 5 green, 9 red, 4 blue; 9 red, 7 green, 12 blue; 2 green, 3 blue, 8 red
@@ -108,141 +106,111 @@ SELECT
            Game 98: 3 green, 4 blue, 7 red; 7 red, 8 green; 7 green, 16 red, 1 blue; 8 green, 2 blue, 4 red; 5 green, 3 blue, 18 red
            Game 99: 6 green, 12 red, 1 blue; 5 blue, 1 red, 7 green; 5 green, 7 red, 10 blue; 8 blue, 1 red, 7 green; 17 red, 4 blue, 9 green
            Game 100: 6 blue, 10 green; 3 green, 4 blue, 1 red; 7 blue, 1 red, 12 green',
-    E'\n'
-  ) AS LINE;
+          E'\n'
+          ) AS LINE
+;
 
+DROP VIEW IF EXISTS cubes CASCADE
+;
 
-CREATE TABLE IF NOT EXISTS cubes (color TEXT, MAX int);
+   CREATE OR REPLACE VIEW cubes AS (
+   SELECT *
+     FROM (
+             VALUES ('red', 12),
+                    ('green', 13),
+                    ('blue', 14)
+          ) AS t (color, max_allowed)
+)
+;
 
+DROP VIEW IF EXISTS games CASCADE
+;
 
-DELETE FROM cubes;
+   CREATE OR REPLACE VIEW games AS (
+   SELECT game_number::INT AS game,
+          rounds
+     FROM lines,
+          regexp_substr (split_part(LINE, ':', 1), '\d+') AS game_number,
+          split_part(LINE, ':', 2) AS rounds
+)
+;
 
+DROP VIEW IF EXISTS games_with_rounds CASCADE
+;
 
-INSERT INTO
-  cubes (color, MAX)
-VALUES
-  ('red', 12),
-  ('green', 13),
-  ('blue', 14);
+   CREATE OR REPLACE VIEW games_with_rounds AS (
+   SELECT game,
+          cubes
+     FROM games,
+          regexp_split_to_table(rounds, ';') AS cubes
+)
+;
 
+DROP VIEW IF EXISTS games_with_cubes CASCADE
+;
 
-DROP VIEW IF EXISTS games CASCADE;
+   CREATE OR REPLACE VIEW games_with_cubes AS (
+   SELECT game,
+          coalesce(red, '0')::INT AS red,
+          coalesce(green, '0')::INT AS green,
+          coalesce(blue, '0')::INT AS blue
+     FROM games_with_rounds,
+          regexp_substr (cubes, '(\d+) red', 1, 1, 'i', 1) AS red,
+          regexp_substr (cubes, '(\d+) green', 1, 1, 'i', 1) AS green,
+          regexp_substr (cubes, '(\d+) blue', 1, 1, 'i', 1) AS blue
+)
+;
 
+DROP VIEW IF EXISTS improbable_games CASCADE
+;
 
-CREATE OR REPLACE VIEW games AS (
-  SELECT
-    game_number::int AS game,
-    rounds
-  FROM
-    lines,
-    regexp_substr (split_part(LINE, ':', 1), '\d+') AS game_number,
-    split_part(LINE, ':', 2) AS rounds
-);
+   CREATE OR REPLACE VIEW improbable_games AS (
+   SELECT game
+     FROM games_with_cubes
+    WHERE red > (
+             SELECT max_allowed
+               FROM cubes
+              WHERE color = 'red'
+          )
+       OR green > (
+             SELECT max_allowed
+               FROM cubes
+              WHERE color = 'green'
+          )
+       OR blue > (
+             SELECT max_allowed
+               FROM cubes
+              WHERE color = 'blue'
+          )
+)
+;
 
+   SELECT sum(game)
+     FROM games
+    WHERE game NOT IN (
+             SELECT game
+               FROM improbable_games
+          )
+;
 
-DROP VIEW IF EXISTS games_with_rounds CASCADE;
-
-
-CREATE OR REPLACE VIEW games_with_rounds AS (
-  SELECT
-    game,
-    cubes
-  FROM
-    games,
-    regexp_split_to_table(rounds, ';') AS cubes
-);
-
-
-DROP VIEW IF EXISTS games_with_cubes CASCADE;
-
-
-CREATE OR REPLACE VIEW games_with_cubes AS (
-  SELECT
-    game,
-    coalesce(red, '0')::int AS red,
-    coalesce(green, '0')::int AS green,
-    coalesce(blue, '0')::int AS blue
-  FROM
-    games_with_rounds,
-    regexp_substr (cubes, '(\d+) red', 1, 1, 'i', 1) AS red,
-    regexp_substr (cubes, '(\d+) green', 1, 1, 'i', 1) AS green,
-    regexp_substr (cubes, '(\d+) blue', 1, 1, 'i', 1) AS blue
-);
-
-
-DROP VIEW IF EXISTS improbable_games CASCADE;
-
-
-CREATE OR REPLACE VIEW improbable_games AS (
-  SELECT
-    game
-  FROM
-    games_with_cubes
-  WHERE
-    red > (
-      SELECT
-        MAX
-      FROM
-        cubes
-      WHERE
-        color = 'red'
-    )
-    OR green > (
-      SELECT
-        MAX
-      FROM
-        cubes
-      WHERE
-        color = 'green'
-    )
-    OR blue > (
-      SELECT
-        MAX
-      FROM
-        cubes
-      WHERE
-        color = 'blue'
-    )
-);
-
-
-SELECT
-  sum(game)
-FROM
-  games
-WHERE
-  game NOT IN (
-    SELECT
-      game
-    FROM
-      improbable_games
-  );
-
-
-SELECT
-  *
-FROM
-  improbable_games;
-
+   SELECT *
+     FROM improbable_games
+;
 
 -- Part 2
-DROP VIEW IF EXISTS games_with_max_cubes CASCADE;
+DROP VIEW IF EXISTS games_with_max_cubes CASCADE
+;
 
+   CREATE OR REPLACE VIEW games_with_max_cubes AS (
+   SELECT game,
+          max(red) AS red,
+          max(green) AS green,
+          max(blue) AS blue
+     FROM games_with_cubes
+ GROUP BY game
+)
+;
 
-CREATE OR REPLACE VIEW games_with_max_cubes AS (
-  SELECT
-    game,
-    max(red) AS red,
-    max(green) AS green,
-    max(blue) AS blue
-  FROM
-    games_with_cubes
-  GROUP BY
-    game
-);
-
-
-SELECT
-  sum(red * green * blue)
-FROM
-  games_with_max_cubes;
+   SELECT sum(red * green * blue)
+     FROM games_with_max_cubes
+;
