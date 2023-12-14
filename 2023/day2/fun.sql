@@ -107,7 +107,43 @@ Game 96: 7 blue, 6 green, 2 red; 3 green, 1 blue; 7 blue, 3 red, 5 green; 1 gree
 Game 97: 10 red, 1 green, 1 blue; 4 green, 11 red, 2 blue; 4 red, 1 blue, 4 green
 Game 98: 3 green, 4 blue, 7 red; 7 red, 8 green; 7 green, 16 red, 1 blue; 8 green, 2 blue, 4 red; 5 green, 3 blue, 18 red
 Game 99: 6 green, 12 red, 1 blue; 5 blue, 1 red, 7 green; 5 green, 7 red, 10 blue; 8 blue, 1 red, 7 green; 17 red, 4 blue, 9 green
-Game 100: 6 blue, 10 green; 3 green, 4 blue, 1 red; 7 blue, 1 red, 12 green
-',
+Game 100: 6 blue, 10 green; 3 green, 4 blue, 1 red; 7 blue, 1 red, 12 green',
     E'\n'
   ) AS LINE;
+
+
+CREATE TABLE IF NOT EXISTS cubes (color TEXT, MAX int);
+
+
+DELETE FROM cubes;
+
+
+INSERT INTO
+  cubes (color, MAX)
+VALUES
+  ('red', 12),
+  ('green', 13),
+  ('blue', 14);
+
+
+CREATE TABLE IF NOT EXISTS games (game int, ROUND TEXT);
+
+
+DELETE FROM games;
+
+
+INSERT INTO
+  games (game, ROUND) (
+    SELECT
+      regexp_substr (split_part(LINE, ':', 1), '\d+')::int,
+      ROUND
+    FROM
+      lines,
+      regexp_split_to_table(split_part(LINE, ':', 2), ';') ROUND
+  );
+
+
+SELECT
+  *
+FROM
+  games;
